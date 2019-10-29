@@ -1,0 +1,46 @@
+{
+  "name": "e-music-player",
+  "version": "1.0.0",
+  "description": "A local music player built with electron",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder"
+  },
+  "repository": "https://github.com/Jiangmenghao/e-music-player.git",
+  "keywords": [
+    "Electron",
+    "music",
+    "player",
+    "demo"
+  ],
+  "author": "Jiangmenghao",
+  "license": "CC0-1.0",
+  "devDependencies": {
+    "electron": "^7.0.0",
+    "electron-builder": "^21.2.0"
+  },
+  "dependencies": {
+    "electron-store": "^5.0.0",
+    "uuid": "^3.3.3"
+  },
+  "build": {
+    "productName": "e-music-player",
+    "appId": "github.jiangmenghao.emusicplayer",
+    "win": {
+      "target": [
+        {
+          "target": "nsis"
+        }
+      ]
+    },
+    "portable": {
+      "artifactName": "e-music-player.exe"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true
+    }
+  }
+}

@@ -1,0 +1,19 @@
+#tracks-list-container {
+    max-height: 50vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+#tracks-list-container i.fa-music {
+    color: pink;
+}
+#tracks-list-container .col-2 .fas {
+    transition: .4s;
+}
+#tracks-list-container .col-2 .fas:hover {
+    color: dodgerblue;
+    transform: scale(1.2);
+    cursor: pointer;
+}
+.active {
+    background-color: rgb(167, 228, 167) !important;
+}

@@ -1,0 +1,8 @@
+version: 1.0.0
+files:
+  - url: e-music-player-Setup-1.0.0.exe
+    sha512: 9lIWrtvwkyLUaYtjNS9ZbNsbVreTu6tF5Z8x+/NEKOwqP8ZyjmLlI64Hn2eYkTVkN1WDk+2eo7fB6Q+UFhsn1g==
+    size: 44942404
+path: e-music-player-Setup-1.0.0.exe
+sha512: 9lIWrtvwkyLUaYtjNS9ZbNsbVreTu6tF5Z8x+/NEKOwqP8ZyjmLlI64Hn2eYkTVkN1WDk+2eo7fB6Q+UFhsn1g==
+releaseDate: '2019-10-29T18:19:22.951Z'

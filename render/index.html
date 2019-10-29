@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>e-music-player</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="./index.css">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>一起听歌吧</h1>
+        <div class="mt-4 px-3" id="tracks-list-container">
+        </div>
+        <button class="btn btn-primary btn-lg btn-block mt-4" id="add-music-button">
+            添加音乐到曲库
+        </button>
+        <div class="container fixed-bottom pb-4">
+            <hr>
+            <div class="row mb-3" id="status-info">
+            </div>
+            <div class="progress">
+                <div class="progress-bar bg-success" id="status-progress" role="progressbar" style="width: 0%;">0%</div>
+            </div>
+        </div>
+    </div>
+    <script>
+        require('./index.js');
+    </script>
+    <script src="https://kit.fontawesome.com/15ba39d3fd.js" crossorigin="anonymous"></script>
+</body>
+</html>
