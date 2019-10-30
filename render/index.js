@@ -3,6 +3,9 @@ const { ipcRenderer } = require('electron');
 let musicAudio = new Audio();
 let allTracks;
 let currentTrack;
+let progressContainer = document.querySelector('#status-container');
+let progressBar = document.querySelector('#status-progress-bar');
+let aimProgress;
 
 document.querySelector('#add-music-button').addEventListener('click', () => {
     ipcRenderer.send('add-music-window');
@@ -90,7 +93,6 @@ const renderPlayingStatus = (musicName, musicDuration) => {
 
 const updateProgress = (currentTime, duration) => {
     const progress = Math.floor(currentTime / duration * 100);
-    const progressBar = document.querySelector('#status-progress');
     progressBar.innerHTML = progress + '%';
     progressBar.style.width = progress + '%';
     const currentCatch = document.querySelector('#current-catch');
@@ -104,3 +106,22 @@ const convertDuration = (time) => {
     const seconds = "0" + Math.floor(time - minutes *60);
     return minutes.substr(-2) + ":" + seconds.substr(-2);
 };
+
+const turnToAimProgress = (aimPercent) => {
+    aimProgress = aimPercent / 100 * musicAudio.duration;
+    musicAudio.currentTime = aimProgress;
+};
+
+document.querySelector('#status-progress').addEventListener('click', (event) => {
+    const id = event.target.id;
+    if(id && id === 'status-progress-bar') {
+        //倒退音乐
+        const clickX = event.clientX;
+        const percent = (clickX - progressContainer.offsetLeft - 15) / event.target.parentNode.offsetWidth * 100;
+        turnToAimProgress(percent);
+    }else {
+        //快进音乐
+        const percent = (event.clientX - progressContainer.offsetLeft - 15) / event.target.offsetWidth * 100;
+        turnToAimProgress(percent);
+    };
+});

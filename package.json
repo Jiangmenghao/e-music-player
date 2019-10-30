@@ -1,6 +1,6 @@
 {
   "name": "e-music-player",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A local music player built with electron",
   "main": "main.js",
   "scripts": {
