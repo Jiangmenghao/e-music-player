@@ -6,6 +6,8 @@ let currentTrack;
 let progressContainer = document.querySelector('#status-container');
 let progressBar = document.querySelector('#status-progress-bar');
 let aimProgress;
+let playModeIcon;
+let playModeStatus = "fa-stream";
 
 document.querySelector('#add-music-button').addEventListener('click', () => {
     ipcRenderer.send('add-music-window');
@@ -25,7 +27,7 @@ const renderListHTML = (tracks) => {
             <i class="fas fa-music"></i>
             <span>${track.musicName}</span>
         </div>
-        <div class="col-2 d-flex justify-content-around">
+        <div class="col-2 d-flex justify-content-around align-items-center">
             <i class="fas fa-play" data-id="${track.id}"></i>
             <i class="fas fa-trash-alt" data-id="${track.id}"></i>
         </div>
@@ -34,6 +36,13 @@ const renderListHTML = (tracks) => {
     }, '');
     const emptyHTML = '<div class="alert alert-primary">还没有添加任何音乐</div>';
     list.innerHTML = tracks.length ? `<ul class="list-group">${listHTML}</ul>` : emptyHTML;
+};
+
+const changeIconToPlay = () => {
+    const pauseStatus = document.querySelector('.fa-pause');
+    if(pauseStatus) {
+        pauseStatus.classList.replace('fa-pause', 'fa-play');
+    };
 };
 
 document.querySelector('#tracks-list-container').addEventListener('click', (event) => {
@@ -49,10 +58,7 @@ document.querySelector('#tracks-list-container').addEventListener('click', (even
             currentTrack = allTracks.find(track => track.id === id);
             musicAudio.src = currentTrack.path;
             musicAudio.play();
-            const pauseStatus = document.querySelector('.fa-pause');
-            if(pauseStatus) {
-                pauseStatus.classList.replace('fa-pause', 'fa-play');
-            };
+            changeIconToPlay();
             const focusBar = document.querySelector('.list-group-item-success');
             if(focusBar) {
                 focusBar.classList.remove('list-group-item-success')
@@ -82,13 +88,17 @@ musicAudio.addEventListener('timeupdate', () => {
 
 const renderPlayingStatus = (musicName, musicDuration) => {
     const player = document.querySelector('#status-info');
-    const infoHTML = `<div class="col font-weight-bold">
+    const infoHTML = `<div class="col-8 font-weight-bold">
     正在播放：${musicName}
     </div>
-    <div class="col">
-        <span id="current-catch">00:00</span> / ${convertDuration(musicDuration)}
+    <div class="col-4 d-flex justify-content-around align-items-center">
+        <div>
+            <span id="current-catch">00:00</span> / ${convertDuration(musicDuration)}
+        </div>
+        <i class="fas ${playModeStatus}" id="play-mode"></i>
     </div>`
     player.innerHTML = infoHTML;
+    playModeIcon = document.querySelector('#play-mode');
 };
 
 const updateProgress = (currentTime, duration) => {
@@ -123,5 +133,76 @@ document.querySelector('#status-progress').addEventListener('click', (event) => 
         //快进音乐
         const percent = (event.clientX - progressContainer.offsetLeft - 15) / event.target.offsetWidth * 100;
         turnToAimProgress(percent);
+    };
+});
+
+document.body.addEventListener('keydown', (event) => {
+    if(event.keyCode === 32) {
+        event.preventDefault();
+    };
+});
+
+document.body.addEventListener('keyup', (event) => {
+    //空格暂停或继续播放
+    if(event.keyCode === 32) {
+        if(musicAudio.paused) {
+            musicAudio.play();
+            document.querySelector('.list-group-item-success .fa-play').classList.replace('fa-play', 'fa-pause');
+        }else {
+            musicAudio.pause();
+            changeIconToPlay();
+        };
+    };
+});
+
+const changeHighlight = () => {
+    document.querySelector('.list-group-item-success').classList.remove('list-group-item-success');
+    const playIcon = document.querySelector(`[data-id = '${currentTrack.id}']`);
+    playIcon.classList.replace('fa-play', 'fa-pause');
+    playIcon.parentNode.parentNode.classList.add('list-group-item-success');
+};
+
+musicAudio.addEventListener('ended', () => {
+    //根据用户选择，判断：顺序播放、单曲循环或随机播放
+    if(playModeIcon.classList.contains('fa-stream')) {
+        changeIconToPlay();
+        //按顺序播放下一首
+        ipcRenderer.send('get-next-music', currentTrack);
+        ipcRenderer.on('next-music', (event, nextMusicTrack) => {
+            currentTrack = nextMusicTrack;
+            musicAudio.src = currentTrack.path;
+            musicAudio.play();
+            changeHighlight();
+        });
+    }else if(playModeIcon.classList.contains('fa-sync-alt')) {
+        musicAudio.play();
+    }else if(playModeIcon.classList.contains('fa-random')) {
+        changeIconToPlay();
+        //随机播放下一首
+        ipcRenderer.send('get-random-music');
+        ipcRenderer.on('random-music', (event, randomMusicTrack) => {
+            currentTrack = randomMusicTrack;
+            musicAudio.src = currentTrack.path;
+            musicAudio.play();
+            changeHighlight();
+        });
+    };
+});
+
+document.querySelector('#status-info').addEventListener('click', (event) => {
+    event.preventDefault();
+    //切换播放模式
+    const { id, classList } = event.target;
+    if(id && id === 'play-mode') {
+        if(classList.contains('fa-stream')) {
+            classList.replace('fa-stream', 'fa-sync-alt');
+            playModeStatus = "fa-sync-alt";
+        }else if(classList.contains('fa-sync-alt')) {
+            classList.replace('fa-sync-alt', 'fa-random');
+            playModeStatus = "fa-random";
+        }else if(classList.contains('fa-random')) {
+            classList.replace('fa-random', 'fa-stream');
+            playModeStatus = "fa-stream";
+        };
     };
 });

@@ -60,4 +60,14 @@ app.on('ready', () => {
       updatedTracks = myStore.deleteTrack(id).getTracks();
       mainWindow.send('add-updated-tracks', updatedTracks);
     });
+
+    ipcMain.on('get-next-music', (event, currentTrack) => {
+      const nextMusicTrack = myStore.nextTrack(currentTrack);
+      mainWindow.send('next-music', nextMusicTrack);
+    });
+
+    ipcMain.on('get-random-music', (event) => {
+      const randomMusicTrack = myStore.randomTrack();
+      mainWindow.send('random-music', randomMusicTrack);
+    });
 });

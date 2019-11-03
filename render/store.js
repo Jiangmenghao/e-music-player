@@ -32,6 +32,14 @@ class DataStore extends Store {
         this.tracks = this.tracks.filter(track => track.id !== id);
         return this.saveTracks();
     };
+    nextTrack(currentTrack) {
+        const currentTrackPath = this.getTracks().map(track => track.path);
+        const currentIndex = currentTrackPath.indexOf(currentTrack.path);
+        return this.tracks[currentIndex + 1];
+    };
+    randomTrack() {
+        return this.tracks[Math.floor(Math.random() * this.tracks.length)];
+    };
 };
 
 module.exports = DataStore;
